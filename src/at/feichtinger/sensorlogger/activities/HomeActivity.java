@@ -3,8 +3,10 @@ package at.feichtinger.sensorlogger.activities;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,13 +16,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import at.feichtinger.sensorlogger.R;
 
 public class HomeActivity extends ListActivity {
+
+	/** The list of help items. */
+	private List<String> items;
+	/** The list of help messages. */
+	private List<String> messages;
+
+	/**
+	 * Listener for clicking on a help item. Displays a dialog showing the help
+	 * message.
+	 */
+	final OnItemClickListener onItemClickListener = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(final AdapterView<?> arg0, final View view, final int position, final long id) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+			builder.setTitle(items.get(position)).setMessage(messages.get(position)).setCancelable(false)
+					.setPositiveButton("Ok, got it.", new DialogInterface.OnClickListener() {
+						public void onClick(final DialogInterface dialog, final int id) {
+							dialog.cancel();
+						}
+					});
+			builder.create().show();
+		}
+	};
 
 	/** Called when the activity is first created. */
 	@Override
@@ -28,9 +55,11 @@ public class HomeActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.start);
 
-		final List<String> items = Arrays.asList(getResources().getStringArray(R.array.help_items));
-		final ListAdapter adapter = new HelpListAdapter(this, R.layout.help_list_item, items);
-		setListAdapter(adapter);
+		items = Arrays.asList(getResources().getStringArray(R.array.help_items));
+		messages = Arrays.asList(getResources().getStringArray(R.array.help_messages));
+		setListAdapter(new HelpListAdapter(this, R.layout.help_list_item, items));
+
+		getListView().setOnItemClickListener(onItemClickListener);
 
 		final Button startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(new OnClickListener() {

@@ -7,6 +7,7 @@
     <string name="logger_activity_tab">Logger</string>
     <string name="no_log_files">Could not find any log files!</string>
 
+    <!-- FTP service strings **************************************************************** -->
     <plurals name="ftpuploadservice_upload_selected_files">
         <item quantity="one">Uploading %1$s file.</item>
         <item quantity="other">Uploading %1$s files.</item>
@@ -20,28 +21,26 @@
     <string name="ftpuploadservice_file_upload_error">Failed uploading file %1$s.</string>
     <string name="ftpuploadservice_no_files_selected">No files selected.</string>
 
-    <!-- Help messages ************************************************************************** -->
-    <string name="app_name">Sensor Logger</string>
-    <string name="hint_logging">Press the start button to begin logging. You will then have to select an activity you will
-		perform. Once you chose one you should put your phone into your pocket - upside down with the
-		screen facing your thigh . You got 10 seconds to do so. Once the 10 seconds have passed your phone
-		will log all sensor values to a file. If you want to change your activity you may take the phone
-		out of your pocket and turn the screen back on. Once you selected a new activity you should put
-		your back into your pocket - again you have ten seconds to so in order to avoid distorting the
-		logged data.</string>
-    <string name="hint_sending">The generated files will be stored on your phone locally. Switch to the "Sessions"-view to
-		get an overview of the stored data. From there you are also able to send the files to someone per
-		email.</string>
-
     <!-- Logger service strings **************************************************************** -->
     <string name="logger_service_started"> Sensor values are being logged.</string>
     <string name="logger_service_stopped"> Stopped logging sensor values.</string>
 
+    <!-- Help messages ************************************************************************** -->
+    <string-array name="help_messages">
+        <item>Click the \'Open logger\' button on the bottom of this activity. Then select an activity from the grid to start logging.</item>
+        <item>Once you selected an activity please put the phone upside down into your right pocket with the screen facing your leg.</item>
+        <item>This application will collect sensor data from your accelerometer. The sensor readings will be stored in a local file and can later be sent to a server.</item>
+        <item>You do not need a constant Internet connection. However, to submit the collected data you will need access to the Internet.</item>
+        <item>Switch to the \'Files\' section by clicking on the tab at the top. Before you can submit any of your files you need to provide login data for the FTP server in the settings section.</item>
+    </string-array>
+
+    <string name="app_name">Sensor Logger</string>
+
     <!-- Help items ***************************************************************************** -->
     <string-array name="help_items">
         <item>How do I start logging?</item>
-        <item>What kind of data will be collected?</item>
         <item>How do I have to carry my phone?</item>
+        <item>What kind of data will be collected?</item>
         <item>Do I need an Internet connection?</item>
         <item>How can I submit the collected data?</item>
     </string-array>
