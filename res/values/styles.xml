@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style
+		name="Heading"
+		parent="@android:style/TextAppearance.Medium">
+		<item
+			name="android:layout_marginTop">10px</item>
+		<item
+			name="android:layout_width">fill_parent</item>
+		<item
+			name="android:layout_height">wrap_content</item>
+		<item
+			name="android:background">#999999</item>
+		<item
+			name="android:paddingLeft">10px</item>
+	</style>
+</resources>

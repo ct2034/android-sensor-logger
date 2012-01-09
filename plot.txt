@@ -1,0 +1,92 @@
+/* *****************************************************************************
+	 * Plot stuff
+	 */
+
+	private void viewFile(final File file) throws IOException {
+		final BufferedReader reader = new BufferedReader(new FileReader(file));
+
+		// first line is always the activity name
+		final String activity = reader.readLine();
+
+		// second line contains descriptions of axes separated by commas
+		String axesDescriptions = reader.readLine();
+		// remove the first description because thats the x axis (otherwise the
+		// chart engine wont work)
+		axesDescriptions = axesDescriptions.substring(axesDescriptions.indexOf(",") + 1);
+		final String[] axes = axesDescriptions.split(",");
+
+		// rest are sensor values separated by commas
+		final List<Double> time = new ArrayList<Double>();
+		final List<Double> xaxis = new ArrayList<Double>();
+		final List<Double> yaxis = new ArrayList<Double>();
+		final List<Double> zaxis = new ArrayList<Double>();
+
+		String line;
+		while ((line = reader.readLine()) != null) {
+			final String[] parts = line.split(",");
+			// first value of each line is the x value (i.e. the timestamp)
+			time.add(Double.parseDouble(parts[0]));
+			// now come the sensor values
+			xaxis.add(Double.parseDouble(parts[1]));
+			yaxis.add(Double.parseDouble(parts[2]));
+			zaxis.add(Double.parseDouble(parts[3]));
+		}
+
+		final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+
+		final XYSeries xseries = new XYSeries(axes[0]);
+		for (int valueIndex = 0; valueIndex < time.size(); valueIndex++) {
+			xseries.add(time.get(valueIndex), xaxis.get(valueIndex));
+		}
+		final XYSeries yseries = new XYSeries(axes[1]);
+		for (int valueIndex = 0; valueIndex < time.size(); valueIndex++) {
+			yseries.add(time.get(valueIndex), yaxis.get(valueIndex));
+		}
+		final XYSeries zseries = new XYSeries(axes[2]);
+		for (int valueIndex = 0; valueIndex < time.size(); valueIndex++) {
+			zseries.add(time.get(valueIndex), zaxis.get(valueIndex));
+		}
+
+		dataset.addSeries(xseries);
+		dataset.addSeries(yseries);
+		dataset.addSeries(zseries);
+
+		final int[] colors = new int[] { Color.RED, Color.GREEN, Color.YELLOW };
+		final PointStyle[] styles = new PointStyle[] { PointStyle.POINT, PointStyle.POINT, PointStyle.POINT };
+		final XYMultipleSeriesRenderer renderer = buildRenderer(colors, styles);
+		final int length = renderer.getSeriesRendererCount();
+		for (int i = 0; i < length; i++) {
+			((XYSeriesRenderer) renderer.getSeriesRendererAt(i)).setFillPoints(true);
+		}
+		renderer.setChartTitle("SensorValues: " + activity);
+		renderer.setXTitle("g [m/s²]");
+		renderer.setYTitle("time [ms]");
+		renderer.setShowGrid(true);
+		renderer.setXLabelsAlign(Align.RIGHT);
+		renderer.setYLabelsAlign(Align.RIGHT);
+		renderer.setZoomButtonsVisible(true);
+		final Intent intent = ChartFactory.getCubicLineChartIntent(this, dataset, renderer, 0.33f, file.getName());
+		startActivity(intent);
+	}
+
+	protected XYMultipleSeriesRenderer buildRenderer(final int[] colors, final PointStyle[] styles) {
+		final XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+		setRenderer(renderer, colors, styles);
+		return renderer;
+	}
+
+	protected void setRenderer(final XYMultipleSeriesRenderer renderer, final int[] colors, final PointStyle[] styles) {
+		renderer.setAxisTitleTextSize(16);
+		renderer.setChartTitleTextSize(20);
+		renderer.setLabelsTextSize(15);
+		renderer.setLegendTextSize(15);
+		renderer.setPointSize(5f);
+		renderer.setMargins(new int[] { 20, 30, 15, 20 });
+		final int length = colors.length;
+		for (int i = 0; i < length; i++) {
+			final XYSeriesRenderer r = new XYSeriesRenderer();
+			r.setColor(colors[i]);
+			r.setPointStyle(styles[i]);
+			renderer.addSeriesRenderer(r);
+		}
+	}

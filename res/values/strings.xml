@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="send_selected_files_button">Send selected files</string>
+    <string name="delete_selected_files_button">Delete selected files</string>
+    <string name="files_activity_tab">Files</string>
+    <string name="logger_activity_tab">Logger</string>
+    <string name="no_log_files">Could not find any log files!</string>
+
+    <plurals name="upload_files">
+        <item quantity="one">Uploading %1$s file.</item>
+        <item quantity="other">Uploading %1$s files.</item>
+    </plurals>
+    <plurals name="upload_files_successful">
+        <item quantity="one">%1$s file successfully uploaded.</item>
+        <item quantity="other">%1$s files successfully uploaded.</item>
+    </plurals>
+
+    <!-- Help messages ************************************************************************** -->
+    <string name="app_name">Sensor Logger</string>
+    <string name="hint_logging">Press the start button to begin logging. You will then have to select an activity you will
+		perform. Once you chose one you should put your phone into your pocket - upside down with the
+		screen facing your thigh . You got 10 seconds to do so. Once the 10 seconds have passed your phone
+		will log all sensor values to a file. If you want to change your activity you may take the phone
+		out of your pocket and turn the screen back on. Once you selected a new activity you should put
+		your back into your pocket - again you have ten seconds to so in order to avoid distorting the
+		logged data.</string>
+    <string name="hint_sending">The generated files will be stored on your phone locally. Switch to the "Sessions"-view to
+		get an overview of the stored data. From there you are also able to send the files to someone per
+		email.</string>
+
+    <!-- Logger service strings **************************************************************** -->
+    <string name="logger_service_started"> Sensor values are being logged.</string>
+    <string name="logger_service_stopped"> Stopped logging sensor values.</string>
+
+    <!-- Help items ***************************************************************************** -->
+    <string-array name="help_items">
+        <item>How do I start logging?</item>
+        <item>What kind of data will be collected?</item>
+        <item>How do I have to carry my phone?</item>
+        <item>Do I need an Internet connection?</item>
+        <item>How can I submit the collected data?</item>
+    </string-array>
+
+    <!-- Logger service strings **************************************************************** -->
+    <string name="activity_content_description">Walking</string>
+    <string name="activity_walk">Walking</string>
+    <string name="activity_run">Running</string>
+    <string name="activity_sit">Sitting</string>
+    <string name="activity_stand">Standing</string>
+    <string name="activity_cycle">Cycling</string>
+    <string name="activity_drivecar">Driving car</string>
+    <string name="activity_stairsdown">Stairs down</string>
+    <string name="activity_stairsup">Stairs up</string>
+
+</resources>

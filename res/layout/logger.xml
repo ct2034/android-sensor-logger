@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#FFFFFF">
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:background="#AAAAAA"
+			android:textColor="#000000"
+			android:text="Status" />
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<TextView
+				android:id="@+id/statusTextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#FF0000"
+				android:textSize="20dp"
+				android:text="test" />
+		</LinearLayout>
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:background="#AAAAAA"
+			android:textColor="#000000"
+			android:text="Activities" />
+		<GridView
+			android:id="@+id/gridview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:numColumns="auto_fit"
+			android:horizontalSpacing="30px"
+			android:verticalSpacing="20px"
+			android:listSelector="#AABBCC" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentBottom="true"
+		style="@android:style/ButtonBar">
+		<Button
+			android:text="Stop"
+			android:id="@+id/stopButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"></Button>
+	</LinearLayout>
+</RelativeLayout>

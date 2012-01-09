@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="at.feichtinger.sensorlogger"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="9" />
+
+    <!-- Permissions ################################################### -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" >
+
+        <!-- Activities ################################################### -->
+        <activity
+            android:name=".activities.TabHostActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.FilesActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name=".activities.LoggerActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="org.achartengine.GraphicalActivity" />
+        <activity android:name=".activities.PreferenceActivity" >
+        </activity>
+        <!-- Services ################################################### -->
+        <service
+            android:name=".services.SensorLoggerService"
+            android:process=":remote" />
+        <service android:name=".services.FTPUploadService" >
+        </service>
+    </application>
+
+</manifest>

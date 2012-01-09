@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="contextmenu_delete">Delete</string>
+    <string name="contextmenu_view">View Graph</string>
+    <string name="contextmenu_open">Open</string>
+    <string name="menu_settings">Settings</string>
+
+</resources>

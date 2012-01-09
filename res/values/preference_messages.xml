@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- UI Messages -->
+    <string name="settings_ftp_category">FTP Settings</string>
+    <string name="settings_ftp_server">Server Address</string>
+    <string name="settings_ftp_user">User</string>
+    <string name="settings_ftp_password">Password</string>
+
+    <!-- Keys (used to store/retrieve the settings in a file - never seen in the UI) -->
+    <string name="settings_key_ftp_server">ftp_serveraddress</string>
+    <string name="settings_key_ftp_user">ftp_serverusername</string>
+    <string name="settings_key_ftp_password">ftp_serverpassword</string>
+
+</resources>
