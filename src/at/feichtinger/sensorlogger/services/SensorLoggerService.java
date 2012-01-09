@@ -88,7 +88,8 @@ public class SensorLoggerService extends Service {
 
 		private void startLogging(final Bundle data) {
 			currentActivity = data.getString(DATA_ACTIVITY);
-			startTime = SystemClock.uptimeMillis();
+			referenceTime = SystemClock.uptimeMillis();
+			startTime = new Date();
 
 			sensorMap.put(Sensor.TYPE_LINEAR_ACCELERATION, new LinkedBlockingQueue<String>());
 			sensorMap.put(Sensor.TYPE_GRAVITY, new LinkedBlockingQueue<String>());
@@ -119,7 +120,7 @@ public class SensorLoggerService extends Service {
 					Log.i(TAG, file.getAbsolutePath());
 					final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
-					writer.write("#" + currentActivity + "\n");
+					writer.write("#" + currentActivity.toLowerCase().replace(" ", "") + "\n");
 					writer.write("time[ms], x-axis[m/s^2], y-axis[m/s^2], z-axis[m/s^2]\n");
 
 					for (final String s : sensorMap.get(sensorType)) {
@@ -140,10 +141,10 @@ public class SensorLoggerService extends Service {
 		}
 
 		private String getFileName(final List<Sensor> sensors) {
-			final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd-HHmmss");
-			String filename = dateFormat.format(new Date()) + "_";
+			final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssSSS");
+			String filename = dateFormat.format(startTime) + "-" + currentActivity.toLowerCase().replace(" ", "") + "-";
 			for (Sensor s : sensors) {
-				filename += s.getName().toLowerCase().replace("_", "") + "_";
+				filename += s.getName().toLowerCase().replace(" ", "");
 			}
 			return filename + ".csv";
 		}
@@ -215,7 +216,12 @@ public class SensorLoggerService extends Service {
 	 * Keeps track of the system time when logging was started. Used to
 	 * calculate relative time offsets of each sensor event.
 	 */
-	private long startTime;
+	private long referenceTime;
+
+	/**
+	 * Remembers when logging started. Used for creating a file name.
+	 */
+	private Date startTime;
 
 	/**
 	 * Used to keep phone listening to sensor values when the screen is turned
@@ -275,8 +281,8 @@ public class SensorLoggerService extends Service {
 		 * @return
 		 */
 		private String toCSVString(final SensorEvent event) {
-			return (event.timestamp / CONVERSION_FACTOR) - startTime + "," + event.values[0] + ", " + event.values[1]
-					+ "," + event.values[2] + "\n";
+			return (event.timestamp / CONVERSION_FACTOR) - referenceTime + "," + event.values[0] + ", "
+					+ event.values[1] + "," + event.values[2] + "\n";
 		}
 	};
 

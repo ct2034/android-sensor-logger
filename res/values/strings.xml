@@ -7,14 +7,18 @@
     <string name="logger_activity_tab">Logger</string>
     <string name="no_log_files">Could not find any log files!</string>
 
-    <plurals name="upload_files">
+    <plurals name="ftpuploadservice_upload_selected_files">
         <item quantity="one">Uploading %1$s file.</item>
         <item quantity="other">Uploading %1$s files.</item>
     </plurals>
-    <plurals name="upload_files_successful">
+    <plurals name="ftpuploadservice_upload_selected_files_finished">
         <item quantity="one">%1$s file successfully uploaded.</item>
         <item quantity="other">%1$s files successfully uploaded.</item>
     </plurals>
+
+    <string name="ftpuploadservice_file_upload_success">File %1$s uploaded.</string>
+    <string name="ftpuploadservice_file_upload_error">Failed uploading file %1$s.</string>
+    <string name="ftpuploadservice_no_files_selected">No files selected.</string>
 
     <!-- Help messages ************************************************************************** -->
     <string name="app_name">Sensor Logger</string>

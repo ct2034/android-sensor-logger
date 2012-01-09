@@ -37,7 +37,7 @@ public class FTPUploadService extends IntentService {
 	public final static String FILE_PATHS = "FTPUploadService.data";
 	/** The key for storing and retrieving a Messenger instance from the intent */
 	public static final String MESSENGER = "FTPUploadService.messenger";
-
+	/** The key for storing and retrieving the status message */
 	public static final String MESSAGE_STATUS = "message.string";
 
 	/** The IP address of the FTP server to connect to. */
@@ -72,23 +72,35 @@ public class FTPUploadService extends IntentService {
 				files[i] = new File(paths[i]);
 			}
 
-			uploadFiles(messenger, files);
+			if (files.length > 0) {
+				uploadFiles(messenger, files);
+			} else {
+				// there is nothing to upload
+				sendStatusToClient(messenger, getResources().getString(R.string.ftpuploadservice_no_files_selected));
+			}
 		}
 	}
 
+	/**
+	 * Uploads all given files to the FTP server. Once a file has been uploaded
+	 * it will be deleted from local storage.
+	 * 
+	 * @param messenger
+	 *            a call-back messenger to inform the calling entity of the
+	 *            current status.
+	 * @param files
+	 *            an array of files to be uploaded
+	 */
 	public void uploadFiles(final Messenger messenger, final File[] files) {
 		Log.i(TAG, ".uploadFiles");
 
 		// show a toast telling the user how many files are going to be uploaded
-		sendStatusToClient(messenger, getQuantityString(R.plurals.upload_files, files.length));
+		sendStatusToClient(messenger, getQuantityString(R.plurals.ftpuploadservice_upload_selected_files, files.length));
 
-		final FTPClient ftpClient = new FTPClient();
 		BufferedInputStream buffIn = null;
 		int nrFilesSent = 0;
 		try {
-			ftpClient.connect(InetAddress.getByName(server));
-			ftpClient.login(username, password);
-			ftpClient.changeWorkingDirectory("./androiddata");
+			final FTPClient ftpClient = connectToServer();
 
 			for (final File file : files) {
 				buffIn = new BufferedInputStream(new FileInputStream(file));
@@ -98,6 +110,13 @@ public class FTPUploadService extends IntentService {
 				if (result) {
 					nrFilesSent++;
 					file.delete();
+
+					// status: file was uploaded successfully
+					final String format = getResources().getString(R.string.ftpuploadservice_file_upload_success);
+					sendStatusToClient(messenger, String.format(format, file.getName()));
+				} else {
+					final String format = getResources().getString(R.string.ftpuploadservice_file_upload_error);
+					sendStatusToClient(messenger, String.format(format, file.getName()));
 				}
 			}
 			// close connection
@@ -111,7 +130,16 @@ public class FTPUploadService extends IntentService {
 			Log.e(TAG, e.getMessage(), e);
 		}
 
-		sendStatusToClient(messenger, getQuantityString(R.plurals.upload_files_successful, nrFilesSent));
+		sendStatusToClient(messenger,
+				getQuantityString(R.plurals.ftpuploadservice_upload_selected_files_finished, nrFilesSent));
+	}
+
+	private FTPClient connectToServer() throws SocketException, IOException, UnknownHostException {
+		final FTPClient ftpClient = new FTPClient();
+		ftpClient.connect(InetAddress.getByName(server));
+		ftpClient.login(username, password);
+		ftpClient.changeWorkingDirectory("./androiddata");
+		return ftpClient;
 	}
 
 	private void sendStatusToClient(final Messenger messenger, final String status) {
