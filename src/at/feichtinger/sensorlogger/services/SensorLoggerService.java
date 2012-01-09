@@ -62,7 +62,11 @@ public class SensorLoggerService extends Service {
 				if (state == ServiceState.LOGGING) {
 					stopLogging();
 				}
-				startLogging(msg.getData());
+				try {
+					startLogging(msg.getData());
+				} catch (IOException e) {
+					Log.e(TAG, e.getMessage(), e);
+				}
 				break;
 			case MSG_STOP_LOGGING:
 				stopLogging();
@@ -86,53 +90,50 @@ public class SensorLoggerService extends Service {
 			}
 		}
 
-		private void startLogging(final Bundle data) {
+		private void startLogging(final Bundle data) throws IOException {
 			currentActivity = data.getString(DATA_ACTIVITY);
 			referenceTime = SystemClock.uptimeMillis();
 			startTime = new Date();
 
-			sensorMap.put(Sensor.TYPE_LINEAR_ACCELERATION, new LinkedBlockingQueue<String>());
-			sensorMap.put(Sensor.TYPE_GRAVITY, new LinkedBlockingQueue<String>());
+			int linearAccSensor = Sensor.TYPE_LINEAR_ACCELERATION;
+			int gravitySensor = Sensor.TYPE_GRAVITY;
+			sensorMap.put(linearAccSensor, new BufferedWriter(new FileWriter(getLogFile(linearAccSensor))));
+			sensorMap.put(gravitySensor, new BufferedWriter(new FileWriter(getLogFile(gravitySensor))));
 
-			mSensorManager.registerListener(sensorEventListener,
-					mSensorManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION).get(0),
+			for (BufferedWriter writer : sensorMap.values()) {
+				writer.write("#" + currentActivity.toLowerCase().replace(" ", "") + "\n");
+				writer.write("time[ms], x-axis[m/s^2], y-axis[m/s^2], z-axis[m/s^2]\n");
+			}
+
+			mSensorManager.registerListener(sensorEventListener, mSensorManager.getSensorList(linearAccSensor).get(0),
 					SensorManager.SENSOR_DELAY_FASTEST);
-			mSensorManager.registerListener(sensorEventListener,
-					mSensorManager.getSensorList(Sensor.TYPE_GRAVITY).get(0), SensorManager.SENSOR_DELAY_FASTEST);
+			mSensorManager.registerListener(sensorEventListener, mSensorManager.getSensorList(gravitySensor).get(0),
+					SensorManager.SENSOR_DELAY_FASTEST);
 
 			state = ServiceState.LOGGING;
 			showNotification();
+		}
+
+		private File getLogFile(int sensorType) throws IOException {
+			final String fileName = getFileName(mSensorManager.getSensorList(sensorType));
+			final File file = new File(getExternalFilesDir(null), fileName);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			Log.i(TAG, "file created: " + file.getAbsolutePath());
+			return file;
 		}
 
 		private void stopLogging() {
 			state = ServiceState.STOPPED;
 			// first stop logging new values
 			mSensorManager.unregisterListener(sensorEventListener);
-
-			// print logged values to a file.
-			for (int sensorType : sensorMap.keySet()) {
+			for (BufferedWriter writer : sensorMap.values()) {
 				try {
-					final File file = new File(getExternalFilesDir(null),
-							getFileName(mSensorManager.getSensorList(sensorType)));
-					if (!file.exists()) {
-						file.createNewFile();
-					}
-					Log.i(TAG, file.getAbsolutePath());
-					final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-
-					writer.write("#" + currentActivity.toLowerCase().replace(" ", "") + "\n");
-					writer.write("time[ms], x-axis[m/s^2], y-axis[m/s^2], z-axis[m/s^2]\n");
-
-					for (final String s : sensorMap.get(sensorType)) {
-						Log.i(TAG, "write: " + s);
-						writer.write(s);
-					}
 					writer.flush();
 					writer.close();
-				} catch (final FileNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (final IOException e) {
-					e.printStackTrace();
+				} catch (IOException e) {
+					Log.e(TAG, e.getMessage(), e);
 				}
 			}
 			// remove notification (using the unique id of our string that was
@@ -235,7 +236,7 @@ public class SensorLoggerService extends Service {
 	 * map. A blocking queue is used to store the events because its content
 	 * will be written to files by a separate thread.
 	 */
-	private Map<Integer, BlockingQueue<String>> sensorMap;
+	private Map<Integer, BufferedWriter> sensorMap;
 
 	/**
 	 * The sensor event listener. Puts sensor values into the corresponding
@@ -255,17 +256,16 @@ public class SensorLoggerService extends Service {
 
 		@Override
 		public void onSensorChanged(final SensorEvent event) {
-			Log.i(TAG, "onSensorChanged called:" + toCSVString(event));
+			// Log.i(TAG, "onSensorChanged called:" + toCSVString(event));
 
-			// get the corresponding queue
-			final BlockingQueue<String> dataQueue = sensorMap.get(event.sensor.getType());
-
-			if (dataQueue != null) {
-				try {
-					dataQueue.put(toCSVString(event));
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
+			try {
+				// get the corresponding queue
+				final BufferedWriter writer = sensorMap.get(event.sensor.getType());
+				if (state == ServiceState.LOGGING) {
+					writer.write(toCSVString(event));
 				}
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage(), e);
 			}
 		}
 
@@ -302,7 +302,7 @@ public class SensorLoggerService extends Service {
 
 		// instantiate private fields
 		mMessenger = new Messenger(new IncomingHandler());
-		sensorMap = new HashMap<Integer, BlockingQueue<String>>();
+		sensorMap = new HashMap<Integer, BufferedWriter>();
 
 		/**
 		 * Acquire a partial wakelock in order to allow for sensor event logging
