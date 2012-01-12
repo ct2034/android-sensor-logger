@@ -2,6 +2,7 @@ package at.feichtinger.sensorlogger.activities;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -143,7 +144,7 @@ public class FilesActivity extends ListActivity {
 				// show file size
 				final TextView sizeView = (TextView) convertView.findViewById(R.id.filelistitem_file_size);
 				if (sizeView != null) {
-					sizeView.setText(f.length() / 1024 + "kB");
+					sizeView.setText(readableFileSize(f.length()));
 				}
 
 				// show a the creation date
@@ -252,5 +253,13 @@ public class FilesActivity extends ListActivity {
 	private void updateFilesList() {
 		allFiles = getExternalFilesDir(null).listFiles();
 		setListAdapter(new ActivitiesAdapter(this, allFiles));
+	}
+
+	public String readableFileSize(long size) {
+		if (size <= 0)
+			return "0";
+		final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
+		int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 }
