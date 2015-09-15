@@ -1,0 +1,1 @@
+This app logs several sensors and writes the sensor events to a comma separated values file. Users can also have a look a some live sensor data displayed as text and graphs.
